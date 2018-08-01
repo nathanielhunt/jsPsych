@@ -71,10 +71,10 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
 
     // draw
     display_element.innerHTML = new_html;
-
+    console.log(trial)
     // randomizing animation parameters
     var oval_ratio = 0.8;
-    var h = Math.floor(Math.random() * (250)) + 200;
+    var h = trial.initial_h
     var w = h * oval_ratio;
     var duration = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000;
 
@@ -89,7 +89,8 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
     // jQuery animating the balloon
     $('#data').attr({height: h, width: w, duration: duration})
     $('.oval').animate({height: h, width: w}, speed=duration, easing='linear', callback=pop); // try easing='linear'?
-
+    $('#data').removeClass('popped')
+    
 //// end of customized code
 
     // store response
@@ -114,7 +115,6 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
         } else {
           var pop = false
         }
-        $('#data').removeClass('popped')
         return pop
       }
       // gather the data to store for the trial
@@ -126,9 +126,9 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
         'width': w,
         'popped': get_pop(),
         'duration': duration,
-        'score': 200 * (response.rt / duration)
+        'score': Math.round(200 * (response.rt / duration))
       };
-
+      console.log(trial_data.popped)
       // clear the display
       display_element.innerHTML = '';
 
