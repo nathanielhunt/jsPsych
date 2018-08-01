@@ -124,7 +124,9 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
         "key_press": response.key,
         'height': h,
         'width': w,
-        'popped': get_pop()
+        'popped': get_pop(),
+        'duration': duration,
+        'score': 200 * (response.rt / duration)
       };
 
       // clear the display
