@@ -90,7 +90,7 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
     $('#data').attr({height: h, width: w, duration: duration})
     $('.oval').animate({height: h, width: w}, speed=duration, easing='linear', callback=pop); // try easing='linear'?
     $('#data').removeClass('popped')
-
+    
 //// end of customized code
 
     // store response
