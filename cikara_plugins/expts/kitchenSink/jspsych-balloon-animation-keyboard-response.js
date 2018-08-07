@@ -9,12 +9,12 @@
  **/
 
 
-jsPsych.plugins["animation-keyboard-response"] = (function() {
+jsPsych.plugins["balloon-animation-keyboard-response"] = (function() {
 
   var plugin = {};
 
   plugin.info = {
-    name: 'animation-keyboard-response',
+    name: 'balloon-animation-keyboard-response',
     description: '',
     parameters: {
       stimulus: {
@@ -60,7 +60,7 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
 
   plugin.trial = function(display_element, trial) {
 
-    var new_html = '<div id="jspsych-animation-keyboard-response-stimulus">'+trial.stimulus+'</div>';
+    var new_html = '<div id="jspsych-balloon-animation-keyboard-response-stimulus">'+trial.stimulus+'</div>';
 
     // add prompt
     if(trial.prompt !== null){
@@ -77,6 +77,7 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
     var h = trial.initial_h
     var w = h * oval_ratio;
     var duration = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000;
+    $('#data').removeClass('popped')
 
     // function to "pop" balloon
     var pop = function(){
@@ -89,8 +90,7 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
     // jQuery animating the balloon
     $('#data').attr({height: h, width: w, duration: duration})
     $('.oval').animate({height: h, width: w}, speed=duration, easing='linear', callback=pop); // try easing='linear'?
-    $('#data').removeClass('popped')
-    
+
 //// end of customized code
 
     // store response
@@ -143,7 +143,7 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
 
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
-      display_element.querySelector('#jspsych-animation-keyboard-response-stimulus').className += ' responded';
+      display_element.querySelector('#jspsych-balloon-animation-keyboard-response-stimulus').className += ' responded';
 
       // only record the first response
       if (response.key == null) {
@@ -169,7 +169,7 @@ jsPsych.plugins["animation-keyboard-response"] = (function() {
     // hide stimulus if stimulus_duration is set
     if (trial.stimulus_duration !== null) {
       jsPsych.pluginAPI.setTimeout(function() {
-        display_element.querySelector('#jspsych-animation-keyboard-response-stimulus').style.visibility = 'hidden';
+        display_element.querySelector('#jspsych-balloon-animation-keyboard-response-stimulus').style.visibility = 'hidden';
       }, trial.stimulus_duration);
     }
 
