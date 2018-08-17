@@ -91,13 +91,15 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
     }
 
     display_element.innerHTML = new_html;
+    $('#gen_icon').html(gen_icon);
+    $('#exhortation').html(gen_exhortation);
 
     $('.jspsych-display-element').addClass('sea'); // sets background to blue
 
     // creating the large div for subjects to fish in and adding the div to hold the net image
     var message_dimensions = $('#message').offset()
     var area_height = $(document).height() - (message_dimensions['top'] + $('#message').height())
-    var $net = $('<div class="net"/>').html('<div><img src="./img/net.png"/></div>');
+    var $net = $('<div class="net"/>').html('<div><img src="./img/Fishing/net.png"/></div>');
     var $fishing_area = $('.fishing_area')
       .css({
         'min-height': '1px',
@@ -151,11 +153,11 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
       function generate_fish(color, $fishes){
         if (color == 'red') {
           var rando = get_random_coords(coords, fish_count);
-          var $fish = $('<div class="fish redfish"/>').html('<img src="./img/redfish.png"/>')
+          var $fish = $('<div class="fish redfish"/>').html('<img src="./img/Fishing/redfish.png"/>')
             .css({'top': rando['top'], 'left': rando['left']}).hide();
         } else {
           var rando = get_random_coords(coords, fish_count);
-          var $fish = $('<div class="fish yellowfish"/>').html('<img src="./img/yellowfish.png"/>')
+          var $fish = $('<div class="fish yellowfish"/>').html('<img src="./img/Fishing/yellowfish.png"/>')
             .css({'top': rando['top'], 'left': rando['left']}).hide();
         }
         $fishes.append($fish);
@@ -235,7 +237,7 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
 
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
-      display_element.querySelector('#jspsych-fish-animation-keyboard-response-stimulus').className += ' responded';
+      document.querySelector('#jspsych-fish-animation-keyboard-response-stimulus').className += ' responded';
       // $('.jspsych-display-element').removeClass('sea');
       // only record the first response
       if (trial.response_ends_trial) {

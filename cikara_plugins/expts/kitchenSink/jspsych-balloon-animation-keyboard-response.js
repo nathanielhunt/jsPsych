@@ -82,7 +82,7 @@ jsPsych.plugins["balloon-animation-keyboard-response"] = (function() {
     // function to "pop" balloon
     var pop = function(){
       $('.center-div').empty();
-      var popped = $('<img src="./img/popped.png"></img>');
+      var popped = $('<img src="img/Balloons/popped.png"></img>');
       $('.center-div').append(popped);
       $('#data').addClass('popped')
     };

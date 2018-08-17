@@ -10,7 +10,6 @@
  * requires jquery, jquery ui
  */
 
-// TODO replace slider with one that dynamically updates number
 
 jsPsych.plugins['html-slider-response-w-feedback'] = (function() {
 
