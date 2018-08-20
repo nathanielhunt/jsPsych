@@ -91,7 +91,9 @@ jsPsych.plugins['html-slider-response-w-feedback'] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-
+    trial.kill = function(){
+      end_trial();
+    };
     var html = '<div id="jspsych-html-slider-response-wrapper" style="margin: 100px 0px;">';
     html += '<div id="jspsych-html-slider-response-stimulus">' + trial.stimulus + '</div>';
     // html += '<div class="jspsych-html-slider-response-container" style="position:relative;">';

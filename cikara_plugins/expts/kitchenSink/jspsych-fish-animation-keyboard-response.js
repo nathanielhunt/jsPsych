@@ -161,7 +161,6 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
             .css({'top': rando['top'], 'left': rando['left']}).hide();
         }
         $fishes.append($fish);
-        // console.log($fishes.length)
       }
 
       // creating the fish divs and container div
@@ -173,14 +172,14 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
         generate_fish('yellow', $fishes)
       }
       $('.jspsych-content-wrapper').append($fishes);
-
+      console.log($('.fish').length)
       // animating fish jumping
       $('.fish').show('slide', {'direction': 'down'})
         .animate({'top': "-=20"}, 400)
         .delay(80)
         .animate({'top': "+=20"}, 400)
         // .delay(500)
-        .hide('slide', {'direction': 'down'}).delay(1000, callback=function(){
+        .hide('slide', {'direction': 'down'}).delay(1000).eq(0).promise().done(function(){
           setTimeout(
             function(){
               after_response()
@@ -214,7 +213,7 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
       };
 
       // clear the display
-      display_element.innerHTML = '';
+      $('.jspych-content-wrapper').innerHTML = '';
 
       // remove custom CSS
       $('.jspsych-content').css({
@@ -234,7 +233,7 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
     var after_response = function() {
       var end_time = Date.now();
       response.rt = end_time - start_time - 2280; // substracts animation time from RT
-
+      $('.fishes').remove();
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
       document.querySelector('#jspsych-fish-animation-keyboard-response-stimulus').className += ' responded';
