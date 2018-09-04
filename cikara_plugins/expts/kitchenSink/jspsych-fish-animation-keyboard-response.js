@@ -179,11 +179,11 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
         .delay(80)
         .animate({'top': "+=20"}, 400)
         // .delay(500)
-        .hide('slide', {'direction': 'down'}).delay(1000).eq(0).promise().done(function(){
+        .hide('slide', {'direction': 'down'}).delay(100).eq(0).promise().done(function(){
           setTimeout(
             function(){
               after_response()
-            }, 800
+            }, 400
           )
         });
     }
