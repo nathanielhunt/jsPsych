@@ -65,8 +65,10 @@ jsPsych.plugins["bird-fixation-response"] = (function() {
   plugin.trial = function(display_element, trial) {
     //
     // new jquery here
-    //
-    //
+    // TODO standardize size of birds
+    // TODO add team icon
+    // TODO add the pigs
+    // TODO record space presses during cross fixation? 
 
 
     var new_html = '<img src="'+trial.stimulus+'" id="jspsych-bird-fixation-response-stimulus"></img>';
