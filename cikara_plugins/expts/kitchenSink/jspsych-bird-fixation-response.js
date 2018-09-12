@@ -72,7 +72,6 @@ jsPsych.plugins["bird-fixation-response"] = (function() {
     // TODO add function to adjust timing of pig appearance
     // TODO add timeout for response so that participants can miss a trial
 
-
     var new_html = '<img src="'+trial.stimulus+'" id="jspsych-bird-fixation-response-stimulus"></img>';
 
     // add prompt

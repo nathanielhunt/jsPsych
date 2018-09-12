@@ -91,6 +91,8 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
     }
 
     display_element.innerHTML = new_html;
+
+    // boilerplate to fill out team icons and headers
     $('#gen_icon').html(gen_icon);
     $('#exhortation').html(gen_exhortation);
 
