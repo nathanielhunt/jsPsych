@@ -78,63 +78,105 @@ jsPsych.plugins["html-counter-response"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
+    if (profile){
+      // display stimulus
+      var html = '<div id="jspsych-html-counter-response-stimulus">'+trial.stimulus+'</div>';
 
-    // display stimulus
-    var html = '<div id="jspsych-html-counter-response-stimulus">'+trial.stimulus+'</div>';
-
-    //display buttons
-    var buttons = [];
-    if (Array.isArray(trial.button_html)) {
-      if (trial.button_html.length == trial.choices.length) {
-        buttons = trial.button_html;
+      //display buttons
+      var buttons = [];
+      if (Array.isArray(trial.button_html)) {
+        if (trial.button_html.length == trial.choices.length) {
+          buttons = trial.button_html;
+        } else {
+          console.error('Error in html-counter-response plugin. The length of the button_html array does not equal the length of the choices array');
+        }
       } else {
-        console.error('Error in html-counter-response plugin. The length of the button_html array does not equal the length of the choices array');
+        for (var i = 0; i < trial.choices.length; i++) {
+          buttons.push(trial.button_html);
+        }
       }
-    } else {
+      html += '<div id="jspsych-html-counter-response-btngroup">';
       for (var i = 0; i < trial.choices.length; i++) {
-        buttons.push(trial.button_html);
+        var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
+        html += '<div class="jspsych-html-counter-response-button" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-counter-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
       }
+      html += '</div>';
+
+      //show prompt if there is one
+      if (trial.prompt !== null) {
+        html += trial.prompt;
+      }
+
+      display_element.innerHTML = html;
+      var styling = $('<style type="text/css">');
+      styling[0].innerHTML = "#overlay {" + //hacking in the styling that Zach set up for the single-question survey
+          "position: fixed; /* Sit on top of the page content */" +
+          "display: none;" +
+          "width: 100%; /* Full width (cover the whole page) */" +
+          "height: 100%; /* Full height (cover the whole page) */" +
+          "top: 100px;" +
+          "left: 0;" +
+          "right: 0;" +
+          "bottom: 0;" +
+          "background-color: rgba(255,255,255,1); /* Black background with opacity */" +
+          "z-index: 0; /* Specify a stack order in case you're using a different order for other elements */" +
+          "cursor: default;" +
+       "}" +
+      "" +
+      //  "#commtext {" +
+      //      "color: rgba(255,255,255,0);" +
+      //      "position: absolute;" +
+      //      "z-index: -1;" +
+      //  "}" +
+      // "" +
+       "#commbox {" +
+           "color: rgba(255,255,255,0);" +
+       "}" +
+      "" +
+       "#comments {" +
+           "color: white;" +
+           "display: none;" +
+      "}"
+      $('head').append(styling)
+
+      var invis = $('<div id="commenting"/>');
+      invis[0].innerHTML = '<div id="overlay">&nbsp;</div>' +
+      '<div id="comments" style="height:200px; width:400px;">' +
+      '  <span id="commtext"><strong>Comments:</strong></span>' +
+      '  <textarea class="form-control" id="commbox" name="comments" placeholder="comments">' +
+      '  </textarea>' +
+      '</div>'
+
+      $('#jspsych-content').append(invis);
+
+      //TODO add invisible comments box
+
+      // start time
+      var start_time = Date.now();
+
+      // add event listeners to buttons
+      for (var i = 0; i < trial.choices.length; i++) {
+        display_element.querySelector('#jspsych-html-counter-response-button-' + i).addEventListener('click', function(e){
+          var choice = e.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
+          after_response(choice);
+        });
+      }
+
+      // store response
+      var response = {
+        rt: null,
+        button: null
+      };
+    } else {
+      display_element.innerHTML = '<p>Error: profile variable not found.</p>'
     }
-    html += '<div id="jspsych-html-counter-response-btngroup">';
-    for (var i = 0; i < trial.choices.length; i++) {
-      var str = buttons[i].replace(/%choice%/g, trial.choices[i]);
-      html += '<div class="jspsych-html-counter-response-button" style="display: inline-block; margin:'+trial.margin_vertical+' '+trial.margin_horizontal+'" id="jspsych-html-counter-response-button-' + i +'" data-choice="'+i+'">'+str+'</div>';
-    }
-    html += '</div>';
-
-    //show prompt if there is one
-    if (trial.prompt !== null) {
-      html += trial.prompt;
-    }
-
-    display_element.innerHTML = html;
-
-    var invis
-
-    $('#jspsych-content').append()
-
-    //TODO add invisible comments box
-    //TODO add all that user data into the jsPsych data propes, I guess
-
-    // start time
-    var start_time = Date.now();
-
-    // add event listeners to buttons
-    for (var i = 0; i < trial.choices.length; i++) {
-      display_element.querySelector('#jspsych-html-counter-response-button-' + i).addEventListener('click', function(e){
-        var choice = e.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
-        after_response(choice);
-      });
-    }
-
-    // store response
-    var response = {
-      rt: null,
-      button: null
-    };
 
     // function to handle responses by the subject
     function after_response(choice) {
+      if ($('#commbox')[0].value.length > 2){
+        jsPsych.data.addProperties({'hidden comments box': $('#commbox')[0].value});
+      }
+
       if(profile){
         console.log(profile);
         for (var prop in profile) {
