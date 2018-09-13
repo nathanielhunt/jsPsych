@@ -173,19 +173,6 @@ jsPsych.plugins["html-counter-response"] = (function() {
 
     // function to handle responses by the subject
     function after_response(choice) {
-      if ($('#commbox')[0].value.length > 2){
-        jsPsych.data.addProperties({'hidden comments box': $('#commbox')[0].value});
-      }
-
-      if(profile){
-        console.log(profile);
-        for (var prop in profile) {
-          if (profile.hasOwnProperty(prop)) {
-            console.log({[prop]: profile[prop]});
-            jsPsych.data.addProperties({[prop]: profile[prop]});
-          }
-        }
-      }
       // measure rt
       var end_time = Date.now();
       var rt = end_time - start_time;
@@ -220,6 +207,20 @@ jsPsych.plugins["html-counter-response"] = (function() {
         "stimulus": trial.stimulus,
         "button_pressed": response.button
       };
+
+      if ($('#commbox')[0].value.length > 2){
+        trial_data['hidden comments box']= $('#commbox')[0].value;
+      }
+
+      if(profile){
+        for (var prop in profile) {
+          if (profile.hasOwnProperty(prop)) {
+            // console.log({[prop]: profile[prop]});
+            // data_from_current_node.addToAll({[prop]: profile[prop]});
+            trial_data[prop] = profile[prop];
+          }
+        }
+      }
 
       // clear the display
       display_element.innerHTML = '';
