@@ -78,7 +78,6 @@ jsPsych.plugins["html-counter-response"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-    if (profile){
       // display stimulus
       var html = '<div id="jspsych-html-counter-response-stimulus">'+trial.stimulus+'</div>';
 
@@ -149,7 +148,6 @@ jsPsych.plugins["html-counter-response"] = (function() {
 
       $('#jspsych-content').append(invis);
 
-      //TODO add invisible comments box
 
       // start time
       var start_time = Date.now();
@@ -167,9 +165,6 @@ jsPsych.plugins["html-counter-response"] = (function() {
         rt: null,
         button: null
       };
-    } else {
-      display_element.innerHTML = '<p>Error: profile variable not found.</p>'
-    }
 
     // function to handle responses by the subject
     function after_response(choice) {
