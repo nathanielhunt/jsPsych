@@ -69,7 +69,7 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
 
 /// customized code
 
-    // disabling some JSPsych CSS to center our scientists and H2s
+    // disabling some JSPsych CSS to center our and H2s
     $('.jspsych-content').css({
         'margin': '0px',
         'line-height': '1.4em'

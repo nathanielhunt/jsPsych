@@ -65,12 +65,25 @@ jsPsych.plugins["bird-fixation-response"] = (function() {
   plugin.trial = function(display_element, trial) {
     //
     // new jquery here
-    // TODO standardize size of birds
-    // TODO add team icon
     // TODO add the pigs
-    // TODO record space presses during cross fixation?
     // TODO add function to adjust timing of pig appearance
-    // TODO add timeout for response so that participants can miss a trial
+
+    // needed variables:
+      // * -number of trial this is-
+      // * number of correct
+      // *
+      
+    n_trial = Number($('#pig').attr('n'))+1
+    $('#pig').attr('n',n_trial)
+
+    var pig;
+    if (typeof(trial.stimulus) == 'string'){
+      console.log('string!');
+    } else {
+      console.log('object!');
+      pig = trial.stimulus[1];
+      trial.stimulus = trial.stimulus[0]
+    }
 
     var new_html = '<img src="'+trial.stimulus+'" id="jspsych-bird-fixation-response-stimulus"></img>';
 
@@ -78,9 +91,25 @@ jsPsych.plugins["bird-fixation-response"] = (function() {
     if (trial.prompt !== null){
       new_html += trial.prompt;
     }
-
+    JSON.parse(jsPsych.data.get().readOnly().last().json())[0].team
     // draw
     display_element.innerHTML = new_html;
+    var $msg_holder = $('<div class=team_div/>')
+    var $header = $('<h2 id="exhortation">Earn points for your team!</h2>');
+    var $team_or_avatar = $('<div id="gen_icon" style="height: 95px"/>');
+    $msg_holder.append($header).append($team_or_avatar);
+    $('.jspsych-content').append($msg_holder)
+
+    $('#gen_icon').html(gen_icon);
+    $('#exhortation').html(gen_exhortation);
+    $('#jspsych-bird-fixation-response-stimulus').css({
+      'max-height': '400px'
+    });
+
+    if (pig){
+      console.log('pig!');
+      console.log(pig);
+    }
 
     // store response
     var response = {
