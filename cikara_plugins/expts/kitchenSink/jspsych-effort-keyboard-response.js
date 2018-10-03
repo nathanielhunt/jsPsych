@@ -59,7 +59,7 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
   }
 
   plugin.trial = function(display_element, trial) {
-
+    var n_keypresses = 0;
     var new_html = '<div id="jspsych-effort-keyboard-response-stimulus">'+trial.stimulus+'</div>';
     console.log('started plugin');
     // add prompt
@@ -70,7 +70,6 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
     // draw
     display_element.innerHTML = new_html;
 
-    var diffculty = trial.difficulty;
     var window_height = $('.jspsych-content-wrapper')[0].clientHeight;
     var meter_height = window_height * .60;
     $('.effort-meter').css({'height': `${meter_height}px`})
@@ -78,13 +77,45 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
     // TODO add countdown timer to screen
     // TODO add the bar appender to listener
 
-    if (diffculty == 'hard'){
-      n_bars = 100;
-      bar_height = meter_height/(n_bars);
-
-    } else {
-      bar_height = meter_height/30;
+    function get_bar_coords() {
+      var bars = [];
+      for (var i = 0; i < n_bars; i++) {
+        if (bars.length > 0) {
+          var last = bars[bars.length-1];
+        } else {
+          var last = 0;
+        };
+        var new_num = Number(Number(last+bar_height).toPrecision(3));
+        bars.push(new_num);
+      };
+      return bars;
     }
+
+    if (trial.difficulty == 'hard'){
+      var n_bars = 100;
+    } else {
+      var n_bars = 30;
+    }
+
+    var bar_height = Number(Number(meter_height/(n_bars)*0.75).toPrecision(3));
+    var coords = get_bar_coords();
+
+    // var $meter = $('.effort-bar');
+    $(document).keypress(function(e){
+      if(e.which == 32){
+        var y_coord = coords.pop()-bar_height;
+        console.log(y_coord);
+        var $bar = $(`<div class="effort-bar" id="bar_${n_keypresses}" />`)
+        ++n_keypresses;
+        $bar.css({
+          'height': `${bar_height}px`,
+          'bottom': y_coord
+        })
+
+        $('.effort-meter').append($bar)
+
+      };
+    });
 
     // store response
     var response = {
@@ -119,7 +150,6 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
 
     // function to handle responses by the subject
     var after_response = function(info) {
-
       // after a valid response, the stimulus will have the CSS class 'responded'
       // which can be used to provide visual feedback that a response was recorded
       display_element.querySelector('#jspsych-effort-keyboard-response-stimulus').className += ' responded';
