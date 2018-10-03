@@ -111,16 +111,23 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
         'position': 'relative'
       })
       .append($net)
-
+    var moving = trial.moving;
     // creates the listener to move net around with the cursor
-    $fishing_area.mousemove(function(e){
-        $net.position({
-          my: "center",
-          of: e,
-          collision: "fit",
-          within: $fishing_area
-        });
-    })
+    if (moving){
+      $fishing_area.mousemove(function(e){
+          $net.position({
+            my: "center",
+            of: e,
+            collision: "fit",
+            within: $fishing_area
+          });
+      })
+    }else{
+      $net.css({
+        'margin-left': "25%",
+        'margin-right': "25%",
+      })
+    }
     // on click, spawn the fish
     $fishing_area.one('click', function(){
       $(this).unbind('mousemove');
