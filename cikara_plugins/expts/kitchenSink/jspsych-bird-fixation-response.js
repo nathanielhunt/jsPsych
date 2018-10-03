@@ -110,6 +110,10 @@ jsPsych.plugins["bird-fixation-response"] = (function() {
         delay = Math.max(50, delay-50);
         $('#pig').attr('delay',delay)
         console.log(`Delay set to ${delay}ms`);
+      } else {
+        delay = Math.min(delay+50,950);
+        $('#pig').attr('delay',delay)
+        console.log(`Delay set to ${delay}ms`);
       }
     };
 
@@ -117,7 +121,7 @@ jsPsych.plugins["bird-fixation-response"] = (function() {
       var pig_appeared = false;
       console.log('pig!');
       console.log(pig);
-      var $pig = $(`<div><img src="${pig}" id="pig"/></div>`)
+      var $pig = $(`<div id="pig_div"><img src="${pig}" id="pig"/></div>`)
       pig_timeout = setTimeout(function(){
         $('.jspsych-content').append($pig);
         pig_appeared = true;
