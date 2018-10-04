@@ -70,13 +70,6 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
     // draw
     display_element.innerHTML = new_html;
 
-    var window_height = $('.jspsych-content-wrapper')[0].clientHeight;
-    var meter_height = window_height * .60;
-    $('.effort-meter').css({'height': `${meter_height}px`})
-
-    // TODO add countdown timer to screen
-    // TODO add the bar appender to listener
-
     function get_bar_coords() {
       var bars = [];
       for (var i = 0; i < n_bars; i++) {
@@ -84,36 +77,46 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
           var last = bars[bars.length-1];
         } else {
           var last = 0;
+          // bars.push(last)
         };
-        var new_num = Number(Number(last+bar_height).toPrecision(3));
+        var new_num = Number(last+(bar_height*1.333333333333));
         bars.push(new_num);
       };
-      return bars;
+      bars2 = [];
+      bars.forEach(function(elem){bars2.push(elem)});
+      return bars2;
     }
+
+    var window_height = $('.jspsych-content-wrapper')[0].clientHeight;
+    var meter_height = window_height * .60;
+    $('.effort-meter').css({'height': `${meter_height}px`})
+
+    // TODO add countdown timer to screen
+    // TODO add the bar appender to listener
 
     if (trial.difficulty == 'hard'){
       var n_bars = 100;
     } else {
       var n_bars = 30;
     }
-
-    var bar_height = Number(Number(meter_height/(n_bars)*0.75).toPrecision(3));
+    var offset_height = $('.effort-meter')[0].offsetHeight;
+    var bar_height = Number(Number(offset_height/(n_bars)*0.75).toPrecision(3));
     var coords = get_bar_coords();
-
+    var distance_from_top = $('.effort-meter').offset()['top'];
     // var $meter = $('.effort-bar');
-    $(document).keypress(function(e){
+    $(document).on('keyup',function(e){
       if(e.which == 32){
-        var y_coord = coords.pop()-bar_height;
-        console.log(y_coord);
-        var $bar = $(`<div class="effort-bar" id="bar_${n_keypresses}" />`)
-        ++n_keypresses;
-        $bar.css({
-          'height': `${bar_height}px`,
-          'bottom': y_coord
-        })
-
-        $('.effort-meter').append($bar)
-
+        if (coords.length > 0){
+          var y_coord = coords.pop()+(distance_from_top-bar_height);
+          console.log(y_coord);
+          var $bar = $(`<div class="effort-bar" id="bar_${n_keypresses}" />`)
+          ++n_keypresses;
+          $bar.css({
+            'height': `${bar_height}px`,
+            'top': y_coord
+          })
+          $('.effort-meter').append($bar)
+        }
       };
     });
 

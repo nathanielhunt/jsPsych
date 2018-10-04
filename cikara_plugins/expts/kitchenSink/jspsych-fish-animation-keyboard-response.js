@@ -100,17 +100,22 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
 
     // creating the large div for subjects to fish in and adding the div to hold the net image
     var message_dimensions = $('#message').offset()
-    var area_height = $(document).height() - (message_dimensions['top'] + $('#message').height())
+    var area_height = $(document).height() - (message_dimensions['top'] + $('#gen_icon').offset()['top'] + $('#exhortation').offset()['top'])
     var $net = $('<div class="net"/>').html('<div><img src="./img/Fishing/net.png"/></div>');
+    $('.fishing_container').css({
+        'min-height': $(document).height()*.95,
+        'min-width': $(document).width() * .95,
+      })
     var $fishing_area = $('.fishing_area')
       .css({
         'min-height': '1px',
-        'height': area_height * .82,
+        'height': area_height*1.1,
         'width': $(document).width() * .95,
         'cursor': 'pointer',
         'position': 'relative'
-      })
-      .append($net)
+      }).append($net);
+      $('.fishing_container')
+      .append($fishing_area)
     var moving = trial.moving;
     // creates the listener to move net around with the cursor
     if (moving == 1){
@@ -123,10 +128,8 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
           });
       })
     }else{
-      $net.css({
-        'margin-left': "25%",
-        'margin-right': "25%",
-      })
+      $net.attr('id','net-non-moving');
+      $('.fishing_area').css({'margin-top':'10%'});
     }
     // on click, spawn the fish
     $fishing_area.one('click', function(){
@@ -137,7 +140,7 @@ jsPsych.plugins["fish-animation-keyboard-response"] = (function() {
 
     function spawn() {
       // get coordinates of net
-      var coords = $net.offset();
+      var coords = $('.net div img').offset();
       coords['bottom'] = coords['top'] + 338; // defines coordinates based on size of net image
       coords['right'] = coords['left'] + 423;
 
