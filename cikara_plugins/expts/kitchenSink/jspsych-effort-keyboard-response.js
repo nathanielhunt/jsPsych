@@ -152,6 +152,7 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
             })
             $('.effort-meter').append($bar)
           } else {
+            $(document).off('keyup');
             end_trial();
           }
         };
