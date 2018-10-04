@@ -63,10 +63,10 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
     var new_html = '<div id="jspsych-effort-keyboard-response-stimulus">'+trial.stimulus+'</div>';
     console.log('started plugin');
     // add prompt
+    var timer_start_time;
     if(trial.prompt !== null){
       new_html += trial.prompt;
     }
-
     // draw
     display_element.innerHTML = new_html;
 
@@ -89,35 +89,105 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
 
     var window_height = $('.jspsych-content-wrapper')[0].clientHeight;
     var meter_height = window_height * .60;
-    $('.effort-meter').css({'height': `${meter_height}px`})
+    var team_div_height_offset = $('.team_div').height() // + $('.team_div').offset()['top']
+    $('.effort-meter').css({
+      'height': `${meter_height}px`,
+      'margin-top': `${team_div_height_offset}px`
+    })
+    $('#jspsych-content').append('<div class="countdown-timer">0:00</div>')
 
     // TODO add countdown timer to screen
     // TODO add the bar appender to listener
 
     if (trial.difficulty == 'hard'){
       var n_bars = 100;
+      timer_start_time = 30000;
     } else {
       var n_bars = 30;
+      timer_start_time = 7000;
     }
+
     var offset_height = $('.effort-meter')[0].offsetHeight;
     var bar_height = Number(Number(offset_height/(n_bars)*0.75).toPrecision(3));
     var coords = get_bar_coords();
     var distance_from_top = $('.effort-meter').offset()['top'];
-    // var $meter = $('.effort-bar');
-    $(document).on('keyup',function(e){
-      if(e.which == 32){
-        if (coords.length > 0){
-          var y_coord = coords.pop()+(distance_from_top-bar_height);
-          console.log(y_coord);
-          var $bar = $(`<div class="effort-bar" id="bar_${n_keypresses}" />`)
-          ++n_keypresses;
-          $bar.css({
-            'height': `${bar_height}px`,
-            'top': y_coord
-          })
-          $('.effort-meter').append($bar)
-        }
-      };
+    var $meter = $('.effort-bar');
+    var bar_score = 0;
+
+    function init_effort_bar(){
+      setTimeout(function(){
+        if ($('#jspsych-effort-keyboard-response-stimulus').children()[0].childNodes.length > 0){
+          $(document).one('keydown',function(e){
+            if(e.which == 32){
+              ++bar_score;
+              var y_coord = coords.pop()+(distance_from_top-bar_height);
+              var $bar = $(`<div class="effort-bar" id="bar_${n_keypresses}" />`)
+              ++n_keypresses;
+              $bar.css({
+                'height': `${bar_height}px`,
+                'top': y_coord
+              })
+              $('.effort-meter').append($bar)
+              setTimeout(function(){
+                bar_listener();
+                timer();
+              },120);
+          }
+        });
+      }
+      },100)
+    }
+
+    function bar_listener(){
+      $(document).on('keyup',function(e){
+        if(e.which == 32){
+          if (coords.length > 0){
+            ++bar_score;
+            var y_coord = coords.pop()+(distance_from_top-bar_height);
+            var $bar = $(`<div class="effort-bar" id="bar_${n_keypresses}" />`)
+            ++n_keypresses;
+            $bar.css({
+              'height': `${bar_height}px`,
+              'top': y_coord
+            })
+            $('.effort-meter').append($bar)
+          } else {
+            end_trial();
+          }
+        };
+      });
+    };
+
+    function timer(){
+      var $timer = $('.countdown-timer');
+      $timer.css({'color':'red'});
+      var time = timer_start_time;
+      trial.trial_duration = timer_start_time;
+      jsPsych.pluginAPI.setTimeout(function() {
+        end_trial();
+      }, trial.trial_duration);
+        var timer_interval = setInterval(function(){
+          if (time >= 0){
+            var time_string = time.toString()
+            if (time_string.length > 3) {
+              var first_digit = time_string[0]
+              var last_two_digits = time_string[1] + time_string[2]
+              $timer[0].innerText = `${first_digit}:${last_two_digits}`
+              time = time - 10;
+            } else {
+              var first_digit = 0;
+              var last_two_digits = time_string[0] + time_string[1]
+              $timer[0].innerText = `${first_digit}:${last_two_digits}`
+              time = time - 10;
+            }
+          } else {
+            $timer[0].innerText = `0:00`
+          }
+        },10)
+    };
+
+    $(document).ready(function(){
+      init_effort_bar();
     });
 
     // store response
@@ -128,7 +198,7 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
 
     // function to end trial when it is time
     var end_trial = function() {
-
+      // clearInterval(timer_interval);
       // kill any remaining setTimeout handlers
       jsPsych.pluginAPI.clearAllTimeouts();
 
@@ -141,7 +211,10 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
       var trial_data = {
         "rt": response.rt,
         "stimulus": trial.stimulus,
-        "key_press": response.key
+        "key_press": response.key,
+        "bar_score": bar_score,
+        "total_possible_score": n_bars,
+        "effort_difficulty": trial.difficulty,
       };
 
       // clear the display
@@ -183,13 +256,6 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
       jsPsych.pluginAPI.setTimeout(function() {
         display_element.querySelector('#jspsych-effort-keyboard-response-stimulus').style.visibility = 'hidden';
       }, trial.stimulus_duration);
-    }
-
-    // end trial if trial_duration is set
-    if (trial.trial_duration !== null) {
-      jsPsych.pluginAPI.setTimeout(function() {
-        end_trial();
-      }, trial.trial_duration);
     }
 
   };

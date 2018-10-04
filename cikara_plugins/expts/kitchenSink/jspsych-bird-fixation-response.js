@@ -104,7 +104,7 @@ jsPsych.plugins["bird-fixation-response"] = (function() {
     });
 
     if (n_trial > 10){
-      console.log('checking go_or_no_go');
+      // console.log('checking go_or_no_go');
       var acc_score = get_bird_go_or_no_go();
       if (acc_score < 0.5){
         delay = Math.max(50, delay-50);
@@ -120,7 +120,7 @@ jsPsych.plugins["bird-fixation-response"] = (function() {
     if (pig){
       var pig_appeared = false;
       console.log('pig!');
-      console.log(pig);
+      // console.log(pig);
       var $pig = $(`<div id="pig_div"><img src="${pig}" id="pig"/></div>`)
       pig_timeout = setTimeout(function(){
         $('.jspsych-content').append($pig);
