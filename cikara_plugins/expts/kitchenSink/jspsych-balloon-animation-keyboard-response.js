@@ -76,7 +76,8 @@ jsPsych.plugins["balloon-animation-keyboard-response"] = (function() {
     var oval_ratio = 0.8;
     var h = trial.initial_h
     var w = h * oval_ratio;
-    var duration = Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000; // TODO change this if needed
+    var duration = get_randint(5000,2000);
+     // Math.floor(Math.random() * (5000 - 2000 + 1)) + 2000; // 
     $('#data').removeClass('popped')
 
     // function to "pop" balloon
