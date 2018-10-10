@@ -80,23 +80,25 @@ jsPsych.plugins["svo-response"] = (function() {
 
   plugin.trial = function(display_element, trial) {
       trial.display_element = display_element;
+      trial.button_html = trial.choice_array
       var $display_element = $(display_element);
     // display_element = $(display_element);
     // display stimulus
 
     //display buttons
     var buttons = [];
-    if (Array.isArray(trial.button_html)) {
-      if (trial.button_html.length == trial.choices.length) {
-        buttons = trial.button_html;
-      } else {
-        console.error('Error in svo-response plugin. The length of the button_html array does not equal the length of the choices array');
-      }
-    } else {
-      for (var i = 0; i < trial.choices.length; i++) {
-        buttons.push(trial.button_html);
-      }
-    }
+    console.log(trial.choice_array);
+    // if (Array.isArray(trial.button_html)) {
+    //   if (trial.button_html.length == trial.choices.length) {
+    //     buttons = trial.button_html;
+    //   } else {
+    //     console.error('Error in svo-response plugin. The length of the button_html array does not equal the length of the choices array');
+    //   }
+    // } else {
+    //   for (var i = 0; i < trial.choices.length; i++) {
+    //     buttons.push(trial.button_html);
+    //   }
+    // }
 
     appendT = function (stim) {
         var $toAppend = $('<div/>', {
@@ -109,7 +111,6 @@ jsPsych.plugins["svo-response"] = (function() {
         // $buttondiv.append($table);
         // $buttondiv.append($header);
         $table.append($header);
-
 
         var labels = ['A', 'B'];
         for (var i = 0; i < stim.length; i++) {
@@ -146,7 +147,7 @@ jsPsych.plugins["svo-response"] = (function() {
         $toAppend.append($buttondiv);
         return $toAppend;
     }
-    var content = appendT(trial.choices)
+    var content = appendT(trial.button_html)
 
     //show prompt if there is one
     if (trial.prompt !== null) {
@@ -188,8 +189,8 @@ jsPsych.plugins["svo-response"] = (function() {
         console.log('clicked!');
         // var choice = event.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
         var choice = $(this).attr('data-choice');
-        console.log($(this))
-        console.log(choice);
+        // console.log($(this))
+        // console.log(choice);
         after_response(choice);
       });
     }

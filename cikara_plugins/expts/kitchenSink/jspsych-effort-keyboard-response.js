@@ -126,40 +126,6 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
     var $meter = $('.effort-bar');
     var bar_score = 0;
 
-    function init_effort_bar(){
-      if (typeof(testing)!='undefined') {
-        console.log('using testing parameters');
-        setTimeout(function(){
-          if ($('#jspsych-effort-keyboard-response-stimulus').children()[0].childNodes.length > 0){
-            $(document).one('keydown',function(e){
-              if(e.which == effor_char){
-                ++bar_score;
-                var y_coord = coords.pop()+(distance_from_top-bar_height);
-                var $bar = $(`<div class="effort-bar" id="bar_${n_keypresses}" />`)
-                ++n_keypresses;
-                $bar.css({
-                  'height': `${bar_height}px`,
-                  'top': y_coord
-                })
-                $('.effort-meter').append($bar)
-                setTimeout(function(){
-                  bar_listener();
-                  timer();
-                },120);
-            }
-          });
-        }
-        },100)
-      } else {
-        $(window).on('load',function(e){
-            // setTimeout(function(){
-          bar_listener();
-          timer();
-            // },120);
-        });
-      }
-    }
-
     function bar_listener(){
       $(document).on('keyup',function(e){
         if(e.which == effor_char){
@@ -189,28 +155,79 @@ jsPsych.plugins["effort-keyboard-response"] = (function() {
       jsPsych.pluginAPI.setTimeout(function() {
         end_trial();
       }, trial.trial_duration);
-        var timer_interval = setInterval(function(){
-          if (time >= 0){
-            var time_string = time.toString()
-            if (time_string.length > 3) {
-              var first_digit = time_string[0]
-              var last_two_digits = time_string[1] + time_string[2]
-              $timer[0].innerText = `${first_digit}:${last_two_digits}`
-              time = time - 10;
+      var timer_interval = setInterval(function(){
+        if (time >= 0){
+          var tenths_of_seconds = time / 10;
+          var time_string = tenths_of_seconds.toString()
+          if (time_string.length >= 3) {
+            if (n_bars==100){
+              if (time_string.length > 3){
+                var first_digit = time_string[0] + time_string[1]
+              } else {
+                var first_digit = "0" + time_string[0]
+              }
             } else {
-              var first_digit = 0;
-              var last_two_digits = time_string[0] + time_string[1]
-              $timer[0].innerText = `${first_digit}:${last_two_digits}`
-              time = time - 10;
+              var first_digit = time_string[0]
             }
+            var fractionals = time_string[time_string.length-2] + time_string[time_string.length-1]
+            $timer[0].innerText = `${first_digit}:${fractionals}`
+            time = time - 10;
+          } else if (time_string.length == 2) {
+            if (n_bars==100){
+                var first_digit = "00";
+              } else {
+                var first_digit = 0;
+              }
+            var fractionals = time_string[time_string.length-2] + time_string[time_string.length-1]
+            $timer[0].innerText = `${first_digit}:${fractionals}`
+            time = time - 10;
           } else {
-            $timer[0].innerText = `0:00`
+            if (n_bars==100){
+                var first_digit = "00";
+              } else {
+                var first_digit = 0;
+              }
+            var fractionals = "0" + time_string[time_string.length-1]
+            $timer[0].innerText = `${first_digit}:${fractionals}`
+            time = time - 10;
           }
-        },10)
+        } else {
+          $timer[0].innerText = `0:00`
+        }
+      },10)
     };
 
+    // function timer(){
+    //   var $timer = $('.countdown-timer');
+    //   $timer.css({'color':'red'});
+    //   var time = timer_start_time;
+    //   trial.trial_duration = timer_start_time;
+    //   jsPsych.pluginAPI.setTimeout(function() {
+    //     end_trial();
+    //   }, trial.trial_duration);
+    //     var timer_interval = setInterval(function(){
+    //       if (time >= 0){
+    //         var time_string = time.toString()
+    //         if (time_string.length > 3) {
+    //           var first_digit = time_string[0]
+    //           var last_two_digits = time_string[1] + time_string[2]
+    //           $timer[0].innerText = `${first_digit}:${last_two_digits}`
+    //           time = time - 10;
+    //         } else {
+    //           var first_digit = 0;
+    //           var last_two_digits = time_string[0] + time_string[1]
+    //           $timer[0].innerText = `${first_digit}:${last_two_digits}`
+    //           time = time - 10;
+    //         }
+    //       } else {
+    //         $timer[0].innerText = `0:00`
+    //       }
+    //     },10)
+    // };
+
     $(document).ready(function(){
-      init_effort_bar();
+      timer();
+      $(document).one('keyup',function(){bar_listener()});
     });
 
     // store response
