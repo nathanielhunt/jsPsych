@@ -87,7 +87,15 @@ jsPsych.plugins["svo-response"] = (function() {
 
     //display buttons
     var buttons = [];
-    console.log(trial.choice_array);
+
+    function string_choices(choice_array){
+      var first = '['+choice_array[0].toString()+']';
+      var second = '['+choice_array[1].toString()+']';
+      console.log(first, second);
+      return first + ',' + second;
+    };
+    var string_array = string_choices(trial.choice_array);
+    // console.log(trial.choice_array);
     // if (Array.isArray(trial.button_html)) {
     //   if (trial.button_html.length == trial.choices.length) {
     //     buttons = trial.button_html;
@@ -156,7 +164,6 @@ jsPsych.plugins["svo-response"] = (function() {
     // display_element.innerHTML = html;
     $(display_element).append(content)
 
-
     $('td').css({
       'padding': '40px'
     });
@@ -189,7 +196,7 @@ jsPsych.plugins["svo-response"] = (function() {
         console.log('clicked!');
         // var choice = event.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
         var choice = $(this).attr('data-choice');
-        // console.log($(this))
+        console.log($(this.value))
         // console.log(choice);
         after_response(choice);
       });
@@ -222,22 +229,27 @@ jsPsych.plugins["svo-response"] = (function() {
         btns[i].setAttribute('disabled', 'disabled');
       }
 
-      if (trial.response_ends_trial) {
-        end_trial();
-      }
+      end_trial();
     };
 
     // function to end trial when it is time
     function end_trial() {
-
       // kill any remaining setTimeout handlers
       jsPsych.pluginAPI.clearAllTimeouts();
+
+      if (response.button == '0-1'){
+        var chosen_button = trial.choice_array[0].toString();
+      } else {
+        var chosen_button = trial.choice_array[1].toString();
+      }
 
       // gather the data to store for the trial
       var trial_data = {
         "rt": response.rt,
         "stimulus": trial.stimulus,
-        "button_pressed": response.button
+        "button_pressed": response.button,
+        "choices": string_array,
+        "chosen_button": chosen_button
       };
 
       // clear the display
@@ -254,14 +266,6 @@ jsPsych.plugins["svo-response"] = (function() {
         // display_element.querySelector('#jspsych-svo-response-stimulus').style.visibility = 'hidden';
       }, trial.stimulus_duration);
     }
-
-    // end trial if time limit is set
-    if (trial.trial_duration !== null) {
-      jsPsych.pluginAPI.setTimeout(function() {
-        end_trial();
-      }, trial.trial_duration);
-    }
-
 
 }
   return plugin;
