@@ -91,7 +91,7 @@ jsPsych.plugins["svo-response"] = (function() {
     function string_choices(choice_array){
       var first = '['+choice_array[0].toString()+']';
       var second = '['+choice_array[1].toString()+']';
-      console.log(first, second);
+      // console.log(first, second);
       return first + ',' + second;
     };
     var string_array = string_choices(trial.choice_array);
@@ -193,10 +193,10 @@ jsPsych.plugins["svo-response"] = (function() {
     // add event listeners to buttons
     for (var i = 0; i < trial.choices.length; i++) {
       $('.option').one('click', function (event) {
-        console.log('clicked!');
+        // console.log('clicked!');
         // var choice = event.currentTarget.getAttribute('data-choice'); // don't use dataset for jsdom compatibility
         var choice = $(this).attr('data-choice');
-        console.log($(this.value))
+        // console.log($(this.value))
         // console.log(choice);
         after_response(choice);
       });
