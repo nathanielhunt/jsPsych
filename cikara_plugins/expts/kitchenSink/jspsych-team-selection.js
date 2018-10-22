@@ -145,10 +145,10 @@ jsPsych.plugins["team-selection"] = (function() {
           var current_team = team_data[team];
           console.log(current_team);
           console.log(condition);
-          if (condition != ["team/w-o-bonus"]) {
-            results(`You were assigned to the ${current_team['name']} team and you will represent the ${current_team['name']} for the rest of the session. Your team will get bonused based on your performance across tasks!`, current_team['img'])
-          } else {
+          if (condition[0] == "team/w-o-bonus") {
             results(`You were assigned to the ${current_team['name']} team and you will represent the ${current_team['name']} for the rest of the session. Your team will get bonused based on your performance across tasks! <p>THIS IS the third condition.</p>`, current_team['img'])
+          } else {
+            results(`You were assigned to the ${current_team['name']} team and you will represent the ${current_team['name']} for the rest of the session. Your team will get bonused based on your performance across tasks!`, current_team['img'])
           }
         }, 2000
       )
