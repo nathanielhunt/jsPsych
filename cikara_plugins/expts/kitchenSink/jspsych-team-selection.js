@@ -87,6 +87,7 @@ jsPsych.plugins["team-selection"] = (function() {
     };
 
     var team = trial.team;
+    var condition = trial.condition;
     console.log(trial.team);
     var $team_container = $('<div id="team_container"/>');
     var all_teams = trial.all_teams;
@@ -143,7 +144,11 @@ jsPsych.plugins["team-selection"] = (function() {
         function(){
           var current_team = team_data[team];
           console.log(current_team);
-          results(`You were assigned to the ${current_team['name']} team and you will represent the ${current_team['name']} for the rest of the session. Your team will get bonused based on your performance across tasks!`, current_team['img'])
+          if (condition != "team/w-o-bonus") {
+            results(`You were assigned to the ${current_team['name']} team and you will represent the ${current_team['name']} for the rest of the session. Your team will get bonused based on your performance across tasks!`, current_team['img'])
+          } else {
+            results(`You were assigned to the ${current_team['name']} team and you will represent the ${current_team['name']} for the rest of the session. Your team will get bonused based on your performance across tasks! <p>THIS IS the third condition.</p>`, current_team['img'])
+          }
         }, 2000
       )
     }
