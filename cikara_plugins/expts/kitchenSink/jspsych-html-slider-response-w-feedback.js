@@ -94,6 +94,8 @@ jsPsych.plugins['html-slider-response-w-feedback'] = (function() {
     trial.kill = function(){
       end_trial();
     };
+    var button_listener_on = false;
+
     var html = '<div id="jspsych-html-slider-response-wrapper" style="margin: 100px 0px;">';
     html += '<div id="jspsych-html-slider-response-stimulus">' + trial.stimulus + '</div>';
     // html += '<div class="jspsych-html-slider-response-container" style="position:relative;">';
@@ -119,22 +121,34 @@ jsPsych.plugins['html-slider-response-w-feedback'] = (function() {
     html += '<button id="jspsych-html-slider-response-next" class="jspsych-btn">'+trial.button_label+'</button>';
 
     display_element.innerHTML = html;
-    //
+    // $('#jspsych-html-slider-response-next').css({
+    //   'color':'darkgrey',
+    //   'background-color': 'lightgrey',
+    // });
+    $('#jspsych-html-slider-response-next').attr({
+      'disabled': 'disabled'
+    });
+
     // $prompt = $('#slider-choice')
     // $prompt.html('<input type="text" id="slider-choice-label" readonly style="border:0; text-align:center; font-weight:bold;">')
 
     $( function() {
-    $( "#slider" ).slider({
-      value:trial.start,
-      min: trial.min,
-      max: trial.max,
-      step: trial.step,
-      slide: function( event, ui ) {
-        $( "#slider-choice-label" ).val( ui.value );
-      }
-    });
-    $( "slider-choice-label" ).val( $( "#slider" ).slider( "value" ) );
-  } );
+      $( "#slider" ).slider({
+        value:trial.start,
+        min: trial.min,
+        max: trial.max,
+        step: trial.step,
+        slide: function( event, ui ) {
+          if (!button_listener_on){
+            button_listen();
+            button_listener_on = true;
+            $('#jspsych-html-slider-response-next').removeAttr('disabled')
+          }
+          $( "#slider-choice-label" ).val( ui.value );
+        }
+      });
+      $( "slider-choice-label" ).val( $( "#slider" ).slider( "value" ) );
+    } );
 
     //
     // $slider = $('.jspsych-html-slider-response-container')
@@ -149,20 +163,21 @@ jsPsych.plugins['html-slider-response-w-feedback'] = (function() {
       rt: null,
       response: null
     };
+    function button_listen(){
+      display_element.querySelector('#jspsych-html-slider-response-next').addEventListener('click', function() {
+        // measure response time
+        var endTime = (new Date()).getTime();
+        response.rt = endTime - startTime;
+        response.response = $( "#slider" ).slider( "value" );
 
-    display_element.querySelector('#jspsych-html-slider-response-next').addEventListener('click', function() {
-      // measure response time
-      var endTime = (new Date()).getTime();
-      response.rt = endTime - startTime;
-      response.response = $( "#slider" ).slider( "value" );
+        if(trial.response_ends_trial){
+          end_trial();
+        } else {
+          display_element.querySelector('#jspsych-html-slider-response-next').disabled = true;
+        }
 
-      if(trial.response_ends_trial){
-        end_trial();
-      } else {
-        display_element.querySelector('#jspsych-html-slider-response-next').disabled = true;
-      }
-
-    });
+      });
+    };
 
     function end_trial(){
 
